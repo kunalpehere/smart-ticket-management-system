@@ -1,0 +1,40 @@
+# .NET build output
+**/bin/
+**/obj/
+.vs/
+*.user
+*.suo
+*.sln.docstates
+
+# Angular and Node
+**/node_modules/
+**/dist/
+**/.angular/cache/
+**/coverage/
+
+# Local environment and secrets
+.env
+.env.*
+!.env.example
+**/appsettings.Local.json
+**/appsettings.*.local.json
+**/secrets.json
+*.pfx
+*.pem
+*.key
+
+# Logs and temporary files
+*.log
+logs/
+temp/
+tmp/
+
+# Local SQL Server database files
+*.mdf
+*.ldf
+
+# OS and IDE metadata
+.DS_Store
+Thumbs.db
+.idea/
+*.code-workspace
