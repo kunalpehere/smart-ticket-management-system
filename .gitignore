@@ -18,6 +18,7 @@
 !.env.example
 **/appsettings.Local.json
 **/appsettings.*.local.json
+Backend/SmartTicketManagement.API/appsettings.Development.json
 **/secrets.json
 *.pfx
 *.pem

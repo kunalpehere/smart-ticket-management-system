@@ -1,0 +1,58 @@
+<div class="app-shell">
+  <aside class="sidebar" aria-label="Primary navigation">
+    <a class="brand" routerLink="/" aria-label="Smart Ticket Management home">
+      <span class="brand-mark" aria-hidden="true">ST</span>
+      <span class="brand-copy">
+        <strong>Smart Ticket</strong>
+        <span>Management System</span>
+      </span>
+    </a>
+
+    <div class="navigation-label">WORKSPACE</div>
+    <nav class="navigation">
+      <a
+        class="navigation-link"
+        routerLink="/"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }">
+        <span class="navigation-icon overview-icon" aria-hidden="true"></span>
+        <span>Overview</span>
+      </a>
+      <div class="navigation-link planned-link" aria-disabled="true">
+        <span class="navigation-icon ticket-icon" aria-hidden="true"></span>
+        <span>Ticket queue</span>
+        <span class="planned-label">Later</span>
+      </div>
+      <div class="navigation-link planned-link" aria-disabled="true">
+        <span class="navigation-icon report-icon" aria-hidden="true"></span>
+        <span>Reports</span>
+        <span class="planned-label">Later</span>
+      </div>
+    </nav>
+
+    <div class="sidebar-footer">
+      <span class="online-indicator" aria-hidden="true"></span>
+      <span>Phase 1 · Foundations</span>
+    </div>
+  </aside>
+
+  <div class="main-column">
+    <header class="topbar">
+      <div class="breadcrumb">
+        <span class="breadcrumb-muted">Workspace</span>
+        <span aria-hidden="true">/</span>
+        <span>Overview</span>
+      </div>
+      <span class="environment-pill">LOCAL DEVELOPMENT</span>
+    </header>
+
+    <main class="page-content">
+      <router-outlet />
+    </main>
+
+    <footer class="page-footer">
+      <span>Smart Ticket Management System</span>
+      <span>Independent implementation</span>
+    </footer>
+  </div>
+</div>

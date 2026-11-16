@@ -1,80 +1,110 @@
 # Smart Ticket Management System
 
-## Project Overview
+An independently authored portfolio project for an internal support-ticket workflow. It uses an Angular frontend, an ASP.NET Core API, and SQL Server.
 
-A fresher-level portfolio application for managing support tickets across EndUser, SupportAgent, SupportManager, and Admin roles. The application is planned as an independently authored project with an Angular frontend, ASP.NET Core API, and SQL Server database.
+**Status:** Phase 1 foundations are implemented and verified. Authentication, ticket workflows, and database schema are planned for later phases.
 
-**Status: Planning / Phase 0.** Application code has not been created. Features described here are planned, not implemented.
+## Implemented in Phase 1
 
-## Project Objectives
+- .NET 10 solution with API, Application, Domain, and Infrastructure projects.
+- EF Core 10 SQL Server provider, an empty ApplicationDbContext, and infrastructure dependency registration.
+- A local Windows-authenticated connection string stored in User Secrets, outside source control.
+- Development Swagger UI, ProblemDetails exception handling, explicit local CORS origins, and GET /api/health.
+- Angular 21 standalone application with strict TypeScript, routing, Angular Material, and a responsive welcome shell.
+- Environment-based frontend API URL and Angular HttpClient.
+- One backend API health integration test and one Angular root-shell test.
 
-- Build a complete frontend-to-API-to-database workflow.
-- Enforce authentication, role permissions, and ticket-specific access on the backend.
-- Keep ticket lifecycle, assignment, and SLA rules understandable and testable.
-- Provide a professional, responsive user experience.
-- Add focused automated tests and accurate setup documentation.
-- Keep the application small enough to explain and demonstrate confidently.
+## Planned for later phases
 
-## Technology Stack
+Authentication and account approval, role/authorization behavior, ticket creation and assignment, comments/activity, SLA/reporting, business dashboards, and database entities/migrations are not implemented.
 
-- C# and ASP.NET Core Web API on .NET 10 LTS
-- Entity Framework Core and Microsoft SQL Server
-- Angular 21, TypeScript, HTML5, CSS3, and Angular Material
-- JWT bearer authentication and BCrypt password hashing
-- xUnit, ASP.NET Core integration tests, and Angular testing
+## Architecture
 
-Exact patch versions and compatible dependencies will be pinned during Phase 1. Current environment readiness is recorded in docs/PHASE_0_PROJECT_BASELINE.md.
+The backend is a lightweight layered modular monolith:
 
-## Application Roles
+- **API:** HTTP startup, Swagger, middleware, CORS, and health endpoint.
+- **Application:** application/use-case layer; currently has no business behavior.
+- **Domain:** domain rules and entities will be introduced with later workflows.
+- **Infrastructure:** EF Core provider, empty context, and dependency registration.
 
-- **EndUser:** submit and track own tickets, comment, and perform eligible cancel/reopen/escalation actions.
-- **SupportAgent:** work currently assigned tickets, update valid statuses, comment, and view history.
-- **SupportManager:** view all system tickets, including cancelled/history; assign eligible agents and review operational reports.
-- **Admin:** manage users/roles and ticket master data; read sanitized ticket data and reports without ticket mutation or comment creation.
+References follow the documented direction: API → Application and Infrastructure; Infrastructure → Application and Domain; Application → Domain.
 
-All permissions are planned. Backend authorization will be authoritative; Angular guards are for navigation only.
+The frontend uses a standalone root, routed AppShell, a features/home page, and Angular environment files. Frontend route guards and authentication are not present.
 
-## Core Features
+## Folder structure
 
-Planned MVP:
-
-- Pending user registration, Admin approval, single-role assignment, and login.
-- Ticket creation, categorized priority, role-filtered lists, and ticket details.
-- Validated ticket status lifecycle and manager-controlled assignment.
-- Ordinary ticket comments and activity history.
-- Creator-only escalation and basic priority-based SLA due dates.
-- Role dashboards, basic database-backed reports, validation, and consistent errors.
-- Unit and API integration tests for security and business rules.
-
-## Project Architecture
-
-The planned architecture is a lightweight layered modular monolith: API, Application, Domain, and Infrastructure projects, plus a feature-organized Angular application. It is designed for one local API, one frontend, and one SQL Server database. See docs/ARCHITECTURE.md.
-
-## Folder Structure
-
-Current Phase 0 structure:
-
+    Backend/
+      SmartTicketManagement.sln
+      SmartTicketManagement.API/
+      SmartTicketManagement.Application/
+      SmartTicketManagement.Domain/
+      SmartTicketManagement.Infrastructure/
+      tests/SmartTicketManagement.API.Tests/
+    Frontend/
+      src/app/
+        features/home/
+        layout/app-shell/
+      src/environments/
     docs/
-    README.md
-    .gitignore
-    .git/
+      PHASE_1_IMPLEMENTATION_REPORT.md
 
-Backend and Frontend are reserved for Phase 1; application scaffolding has not been created.
+## Prerequisites
 
-## Development Status
+- .NET SDK 10.
+- Node.js 22.12 or later in the supported Node 22 line.
+- SQL Server Express instance TEW_SQLEXPRESS for later database work.
+- No global Angular CLI is needed.
 
-- Phase 0: project baseline and decisions.
-- Phase 1: backend/frontend foundations — not started.
-- All application features are planned and unimplemented.
+Angular 21 was generated using npx. The workspace pins npm 11.6.0 because the installed npm 10.9.2 encountered a known peer-resolution defect while resolving Angular 21's Vitest dependency graph. The temporary npm invocation does not change global npm.
 
-## Setup Instructions
+## Local database configuration
 
-To be completed during implementation. The intended stack requires a supported .NET 10 SDK, a Node.js version compatible with Angular 21, npm, SQL Server, and Angular CLI tooling. No setup/build/run commands are documented as validated yet.
+The API project already defines a `UserSecretsId`, so initializing User Secrets again is not necessary. Configure the per-user `ConnectionStrings:DefaultConnection` value from the repository root:
 
-## Testing
+    dotnet user-secrets set "ConnectionStrings:DefaultConnection" "Server=.\TEW_SQLEXPRESS;Database=SmartTicketManagementDb;Trusted_Connection=True;TrustServerCertificate=True;MultipleActiveResultSets=True" --project Backend/SmartTicketManagement.API/SmartTicketManagement.API.csproj
 
-Planned: xUnit unit tests, ASP.NET Core API integration tests, and Angular tests. No tests have been created or run.
+The API loads User Secrets in Development, and the command above stores the connection string outside source control. `appsettings.Development.example.json` contains the safe local Windows-authentication example only; it is not loaded automatically. The development connection targets `SmartTicketManagementDb`; **this database has not been created**. No migration has been generated or applied, and no existing SQL Server database was changed. The context is intentionally empty until the first domain entities are approved and introduced.
 
-## Future Improvements
+## Run the applications
 
-Only after the MVP is working and tested: optional least-loaded auto-assignment, email notifications, real-time updates, export, or additional reporting. Microservices, Kubernetes, multi-tenancy, SSO, queues, and distributed caching are outside the current scope.
+Start the API from the repository root:
+
+    dotnet run --project Backend/SmartTicketManagement.API/SmartTicketManagement.API.csproj --launch-profile http
+
+The Development profile listens at http://localhost:5073.
+
+- Health: GET http://localhost:5073/api/health
+- Swagger UI: http://localhost:5073/swagger
+- OpenAPI JSON: http://localhost:5073/swagger/v1/swagger.json
+
+Start the frontend in another PowerShell window:
+
+    cd Frontend
+    npx --yes npm@11.6.0 install
+    npm.cmd run start
+
+The Angular development server runs at http://localhost:4200. Development API base URL is http://localhost:5073/api; production uses the same-origin /api path. Development CORS allows only http://localhost:4200 and http://127.0.0.1:4200. No wildcard production CORS policy is configured.
+
+## Build and test
+
+From the repository root:
+
+    dotnet build Backend/SmartTicketManagement.sln
+    dotnet test Backend/SmartTicketManagement.sln
+
+From Frontend/:
+
+    npm.cmd run build
+    npm.cmd run test -- --watch=false
+
+The frontend test command uses Angular's Vitest runner.
+
+## Limitations
+
+- ApplicationDbContext has no entity sets yet; there is no schema, migration, or application database.
+- API health confirms API process health only; it does not probe SQL Server.
+- The health integration test intentionally supplies an unreachable test-only SQL connection string and proves that the health endpoint does not require a database connection.
+- The API and frontend currently expose only foundation behavior; login, ticket operations, and business dashboards are out of scope.
+- SQL Server's local connection was supplied as verified for this Phase 1 task, but this implementation did not connect to or modify a database.
+
+See docs/PHASE_1_IMPLEMENTATION_REPORT.md for the file-level report and verification results.

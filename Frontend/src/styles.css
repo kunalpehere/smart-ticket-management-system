@@ -1,0 +1,15 @@
+html,
+body {
+  min-height: 100%;
+  margin: 0;
+}
+
+body {
+  color: #27384d;
+  background: #f5f7fb;
+  font-family: "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
